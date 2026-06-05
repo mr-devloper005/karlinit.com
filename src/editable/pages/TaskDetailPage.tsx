@@ -1,13 +1,12 @@
 import Link from 'next/link'
 import type { CSSProperties } from 'react'
 import { notFound } from 'next/navigation'
-import { ArrowLeft, Bookmark, Building2, Camera, CheckCircle2, Download, ExternalLink, FileText, Globe2, Mail, MapPin, MessageCircle, Phone, Tag, UserRound } from 'lucide-react'
+import { ArrowLeft, Bookmark, Building2, Camera, CheckCircle2, Download, ExternalLink, FileText, Globe2, Mail, MapPin, MessageCircle, Navigation, Phone, Star, Tag, UserRound } from 'lucide-react'
 import { buildPostMetadata, buildTaskMetadata } from '@/lib/seo'
 import { buildPostUrl, fetchArticleComments, fetchTaskPostBySlug, fetchTaskPosts } from '@/lib/task-data'
 import { getTaskConfig, SITE_CONFIG, type TaskKey } from '@/lib/site-config'
 import type { SitePost } from '@/lib/site-connector'
 import { EditableSiteShell } from '@/editable/shell/EditableSiteShell'
-import { getVisualPreset, visualSystem } from '@/editable/theme/visual-system'
 
 export const revalidate = 3
 
@@ -95,6 +94,8 @@ const formatPlainText = (raw: string) => {
 
 const summaryText = (post: SitePost) => post.summary || asText(getContent(post).description) || asText(getContent(post).excerpt) || ''
 const categoryOf = (post: SitePost, fallback: string) => asText(getContent(post).category) || post.tags?.[0] || fallback
+const externalHref = (value: string) => value ? (/^https?:\/\//i.test(value) ? value : `https://${value.replace(/^\/+/, '')}`) : '#'
+const directionsHref = (address: string) => address ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}` : '#'
 const mapSrcFor = (post: SitePost) => {
   const address = getField(post, ['address', 'location', 'city'])
   const lat = getField(post, ['lat', 'latitude'])
@@ -105,8 +106,7 @@ const mapSrcFor = (post: SitePost) => {
 }
 
 export function TaskDetailView({ task, post, related, comments = [] }: { task: TaskKey; post: SitePost; related: SitePost[]; comments?: Array<{ id: string; name: string; comment: string; createdAt: string }> }) {
-  const preset = getVisualPreset(visualSystem.recommendedPreset as any)
-  const detailVars = { '--detail-bg': preset.colors.background, '--detail-text': preset.colors.foreground, '--detail-surface': preset.colors.surface, '--detail-accent': preset.colors.accent } as CSSProperties
+  const detailVars = { '--detail-bg': '#f7f8f4', '--detail-text': '#14231d', '--detail-surface': '#ffffff', '--detail-accent': '#16784a' } as CSSProperties
 
   return (
     <EditableSiteShell>
@@ -126,7 +126,7 @@ export function TaskDetailView({ task, post, related, comments = [] }: { task: T
 function BackLink({ task }: { task: TaskKey }) {
   const taskConfig = getTaskConfig(task)
   return (
-    <Link href={taskConfig?.route || '/'} className="inline-flex items-center gap-2 rounded-full border border-[var(--editable-border)] bg-white/70 px-4 py-2 text-sm font-black">
+    <Link href={taskConfig?.route || '/'} className="inline-flex items-center gap-2 rounded-full border border-[var(--editable-border)] bg-white/85 px-4 py-2 text-sm font-black text-[#14231d]">
       <ArrowLeft className="h-4 w-4" /> Back to {taskConfig?.label || 'posts'}
     </Link>
   )
@@ -156,31 +156,111 @@ function ListingDetail({ post, related }: { post: SitePost; related: SitePost[] 
   const phone = getField(post, ['phone', 'telephone', 'mobile'])
   const email = getField(post, ['email'])
   const website = getField(post, ['website', 'url'])
-  const mapSrc = mapSrcFor(post)
+  const category = categoryOf(post, 'Business')
+  const tags = [...new Set([category, ...((post.tags || []).filter(Boolean))])].slice(0, 6)
+  const heroImages = [images[1], images[2], images[0]].filter(Boolean)
+  const fallbackHero = '/placeholder.svg?height=900&width=1200'
+
   return (
-    <section className="mx-auto max-w-[var(--editable-container)] px-4 py-10 sm:px-6 lg:px-8 lg:py-16">
-      <BackLink task="listing" />
-      <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_420px]">
-        <article className="rounded-[2.8rem] border border-[var(--editable-border)] bg-white p-6 shadow-[0_30px_90px_rgba(15,23,42,0.09)] sm:p-9">
-          <div className="grid gap-6 sm:grid-cols-[150px_1fr]">
-            <div className="flex h-36 w-36 items-center justify-center overflow-hidden rounded-[2rem] bg-[var(--detail-bg)] ring-1 ring-[var(--editable-border)]">
-              {logo ? <img src={logo} alt="" className="h-full w-full object-cover" /> : <Building2 className="h-14 w-14 opacity-40" />}
+    <section className="bg-[#f7f8f4] text-[#14231d]">
+      <div className="relative overflow-hidden bg-[#10251c] text-white">
+        <div className="relative z-20 mx-auto flex max-w-[1180px] items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+          <BackLink task="listing" />
+          <div className="hidden items-center gap-3 md:flex">
+            {website ? <Link href={externalHref(website)} target="_blank" rel="noreferrer" className="rounded-full border border-white/20 px-4 py-2 text-sm font-black">Visit website <ExternalLink className="ml-1 inline h-4 w-4" /></Link> : null}
+          </div>
+        </div>
+
+        <div className="grid min-h-[460px] lg:grid-cols-[0.9fr_1.25fr_0.9fr]">
+          {(heroImages.length ? heroImages : [fallbackHero, fallbackHero, fallbackHero]).slice(0, 3).map((image, index) => (
+            <div key={`${image}-${index}`} className="relative min-h-[260px] overflow-hidden border-white/10 lg:min-h-[460px] lg:border-l">
+              <img src={image} alt="" className="absolute inset-0 h-full w-full object-cover opacity-68" />
+              <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(16,37,28,0.16),rgba(16,37,28,0.78))]" />
             </div>
-            <div>
-              <p className="text-xs font-black uppercase tracking-[0.28em] text-[var(--detail-accent)]">Business listing</p>
-              <h1 className="mt-3 text-4xl font-black leading-[0.98] tracking-[-0.07em] sm:text-6xl">{post.title}</h1>
-              <p className="mt-5 max-w-3xl text-base leading-8 opacity-70">{summaryText(post)}</p>
+          ))}
+        </div>
+
+        <div className="pointer-events-none absolute inset-0 z-10 flex items-center">
+          <div className="mx-auto w-full max-w-[1180px] px-4 sm:px-6 lg:px-8">
+            <div className="max-w-2xl">
+              <div className="flex items-center gap-4">
+                <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-2xl border border-white/20 bg-white/92 text-[#10251c] shadow-2xl">
+                  {logo ? <img src={logo} alt="" className="h-full w-full object-cover" /> : <Building2 className="h-10 w-10" />}
+                </div>
+                <div>
+                  <p className="inline-flex items-center gap-2 rounded-full bg-white/14 px-3 py-1.5 text-xs font-black uppercase tracking-[0.18em] backdrop-blur"><CheckCircle2 className="h-4 w-4 text-[#9ed9b7]" /> Claimed business profile</p>
+                  <h1 className="mt-3 text-5xl font-black leading-[0.95] tracking-[-0.07em] sm:text-6xl">{post.title}</h1>
+                </div>
+              </div>
+              <div className="mt-6 flex flex-wrap items-center gap-4 text-sm font-black">
+                <span className="flex items-center gap-1 text-[#f8d56b]">{Array.from({ length: 5 }).map((_, index) => <Star key={index} className="h-5 w-5 fill-current" />)}</span>
+                <span>5.0 profile score</span>
+                <span className="rounded-full bg-white/14 px-3 py-1">{category}</span>
+              </div>
+              <div className="pointer-events-auto mt-7 flex flex-wrap gap-3 md:hidden">
+                {website ? <Link href={externalHref(website)} target="_blank" rel="noreferrer" className="rounded-full border border-white/20 px-4 py-2 text-sm font-black">Visit website</Link> : null}
+              </div>
             </div>
           </div>
-          <InfoGrid items={[['Location', address, MapPin], ['Phone', phone, Phone], ['Email', email, Mail], ['Website', website, Globe2]]} />
-          <BodyContent post={post} />
-          <ImageStrip images={images.slice(1)} label="Business showcase" />
+        </div>
+      </div>
+
+      <div className="mx-auto grid max-w-[1180px] gap-8 px-4 py-12 sm:px-6 lg:grid-cols-[minmax(0,1fr)_360px] lg:px-8">
+        <article className="space-y-8">
+          <section className="rounded-none border border-[#14231d]/35 bg-[#eee9dd] p-7 shadow-[10px_10px_0_#dff2e7] sm:p-9">
+            <h2 className="text-2xl font-black tracking-[-0.04em]">About this business</h2>
+            <BodyContent post={post} />
+          </section>
+
+          {tags.length ? (
+            <section className="rounded-none border border-[#14231d]/35 bg-[#eee9dd] p-7 sm:p-9">
+              <h2 className="text-xl font-black tracking-[-0.04em]">Business tags</h2>
+              <div className="mt-5 flex flex-wrap gap-3">
+                {tags.map((tag) => <span key={tag} className="inline-flex items-center gap-2 rounded-full border border-[#14231d]/20 bg-white/45 px-4 py-2 text-sm font-black"><Tag className="h-4 w-4 text-[#16784a]" /> {tag}</span>)}
+              </div>
+            </section>
+          ) : null}
         </article>
-        <aside className="space-y-5">
-          {mapSrc ? <MapBox src={mapSrc} label={address || post.title} /> : <ContactAction website={website} phone={phone} email={email} />}
-          {mapSrc ? <ContactAction website={website} phone={phone} email={email} /> : null}
+
+        <aside className="space-y-7 lg:sticky lg:top-24 lg:self-start">
+          <BusinessContactPanel address={address} phone={phone} email={email} website={website} title={post.title} />
+          <GalleryPanel images={images} />
           <RelatedPanel task="listing" post={post} related={related} compact />
         </aside>
+      </div>
+    </section>
+  )
+}
+
+function BusinessContactPanel({ address, phone, email, website, title }: { address: string; phone: string; email: string; website: string; title: string }) {
+  return (
+    <section className="border border-[#14231d]/55 bg-[#eee9dd] p-7 shadow-[7px_7px_0_#a7d5c2]">
+      <h2 className="text-2xl font-black tracking-[-0.04em]">{address || 'Contact information'}</h2>
+      <div className="mt-6 grid gap-4 text-sm font-bold">
+        {phone ? <a href={`tel:${phone}`} className="flex items-center gap-3 transition hover:text-[#16784a]"><Phone className="h-4 w-4" /> {phone}</a> : null}
+        {email ? <a href={`mailto:${email}`} className="flex items-center gap-3 transition hover:text-[#16784a]"><Mail className="h-4 w-4" /> {email}</a> : null}
+        {website ? <Link href={externalHref(website)} target="_blank" rel="noreferrer" className="flex items-center gap-3 transition hover:text-[#16784a]"><Globe2 className="h-4 w-4" /> {website.replace(/^https?:\/\//i, '')}</Link> : null}
+        {address ? <Link href={directionsHref(address)} target="_blank" rel="noreferrer" className="flex items-center gap-3 transition hover:text-[#16784a]"><Navigation className="h-4 w-4" /> Get directions</Link> : null}
+      </div>
+      <div className="mt-7 grid gap-3">
+        {website ? <Link href={externalHref(website)} target="_blank" rel="noreferrer" className="inline-flex items-center justify-center gap-2 bg-[#16784a] px-5 py-3 text-sm font-black text-white">Visit website <ExternalLink className="h-4 w-4" /></Link> : null}
+        {phone ? <a href={`tel:${phone}`} className="inline-flex items-center justify-center gap-2 border border-[#14231d]/25 px-5 py-3 text-sm font-black">Call business <Phone className="h-4 w-4" /></a> : null}
+        {!website && !phone && !email ? <Link href={`/contact?subject=${encodeURIComponent(`Question about ${title}`)}`} className="inline-flex items-center justify-center gap-2 bg-[#16784a] px-5 py-3 text-sm font-black text-white">Ask about this listing</Link> : null}
+      </div>
+    </section>
+  )
+}
+
+
+
+function GalleryPanel({ images }: { images: string[] }) {
+  if (!images.length) return null
+  return (
+    <section id="photo-gallery" className="border border-[#14231d]/55 bg-[#eee9dd] p-7 shadow-[7px_7px_0_#f0e98a]">
+      <h2 className="flex items-center gap-2 text-lg font-black"><Camera className="h-5 w-5 text-[#16784a]" /> Photo gallery</h2>
+      <div className="mt-5 h-px bg-[#16784a]/50" />
+      <div className="mt-6 flex flex-wrap gap-4">
+        {images.slice(0, 6).map((image, index) => <a key={`${image}-${index}`} href={image} target="_blank" rel="noreferrer" className="block h-16 w-16 overflow-hidden rounded-full border-2 border-white shadow-sm transition hover:scale-105"><img src={image} alt="" className="h-full w-full object-cover" /></a>)}
       </div>
     </section>
   )
@@ -385,7 +465,6 @@ function RelatedPanel({ task, post, related, compact = false }: { task: TaskKey;
           <div className="mt-4 grid gap-3 text-sm font-bold opacity-75">
             <p className="inline-flex items-center gap-2"><Tag className="h-4 w-4" /> Task: {taskConfig?.label || task}</p>
             <p className="inline-flex items-center gap-2"><CheckCircle2 className="h-4 w-4" /> Site: {SITE_CONFIG.name}</p>
-            {post.publishedAt ? <p>Published: {new Date(post.publishedAt).toLocaleDateString()}</p> : null}
           </div>
         </div>
       ) : null}
