@@ -52,8 +52,8 @@ export const taskPageVoices = {
   },
   listing: {
     eyebrow: 'Business directory',
-    headline: 'Business listings built for discovery and comparison.',
-    description: 'Listing pages should behave like a directory with trust cues, metadata, and a practical search rhythm.',
+    headline: 'Discover businesses ready to earn your trust.',
+    description: 'Browse clear, detailed company profiles, compare services, and connect directly with providers that fit your needs.',
     filterLabel: 'Filter business category',
     secondaryNote: 'Prioritize comparison, location, and direct action paths.',
     chips: ['Directory', 'Compare', 'Business discovery'],

@@ -3,16 +3,16 @@ import { slot4BrandConfig } from '@/editable/theme/brand.config'
 export const pagesContent = {
   home: {
     metadata: {
-      title: 'Stories, visuals, and discoverable content',
-      description: 'Explore articles, images, listings, and curated posts through a cleaner reading-first experience.',
-      openGraphTitle: 'Stories, visuals, and discoverable content',
-      openGraphDescription: 'Discover articles, visual posts, and connected content through a calmer reading-first experience.',
-      keywords: ['story platform', 'article site', 'visual content', 'content discovery'],
+      title: 'Find trusted businesses near you',
+      description: 'Explore verified business listings, compare services, and connect with companies that fit your needs.',
+      openGraphTitle: 'Find trusted businesses near you',
+      openGraphDescription: 'Discover and compare dependable businesses through a clear, useful local directory.',
+      keywords: ['business directory', 'local businesses', 'business listings', 'service providers'],
     },
     hero: {
-      badge: 'Latest stories and visuals',
-      title: ['A thoughtful home for', 'stories, visuals, and discovery.'],
-      description: 'Explore fresh articles, image-led posts, and discoverable content across the platform through a calmer and clearer browsing experience.',
+      badge: 'Business discovery made simple',
+      title: ['Find the right business', 'with confidence.'],
+      description: 'Search trusted listings, compare services, and connect directly with businesses ready to help.',
       primaryCta: { label: 'Read latest stories', href: '/article' },
       secondaryCta: { label: 'Explore visuals', href: '/image' },
       searchPlaceholder: 'Search stories, visuals, listings, and more',
@@ -52,33 +52,34 @@ export const pagesContent = {
     },
   },
   about: {
-    badge: 'Our Story',
-    title: 'A calmer, clearer way to explore content.',
-    description: `${slot4BrandConfig.siteName} is built to make long-form reading, visual discovery, and supporting resources feel like one unified experience.`,
+    badge: 'Why we exist',
+    title: 'A clearer way to find the right business.',
+    description: `${slot4BrandConfig.siteName} helps customers discover dependable businesses and gives companies a useful place to explain what they do best.`,
     paragraphs: [
-      'Instead of splitting everything into disconnected pages, the platform keeps related content easy to move through and easy to understand.',
-      'Whether someone starts with an article, listing, image post, or resource page, they can continue exploring without losing context.',
+      'Choosing a provider should not require opening dozens of tabs or decoding vague profiles. We organize practical business information so visitors can compare options with less friction.',
+      'Every listing is designed to surface the details that matter: services, location, contact options, business story, and related providers worth considering.',
+      'For business owners, the directory creates a focused place to build visibility, communicate value, and connect with people already looking for help.',
     ],
     values: [
       {
-        title: 'Reading-first experience',
-        description: 'We prioritize clarity, pacing, and structure so people can read, browse, and discover without noise.',
+        title: 'Useful information first',
+        description: 'We prioritize clear service details, direct contact paths, and practical comparison cues.',
       },
       {
-        title: 'Connected content surfaces',
-        description: 'Articles, visual posts, listings, resources, and profiles stay connected so discovery feels natural across the site.',
+        title: 'Better local discovery',
+        description: 'Categories and related listings make it easier to discover strong alternatives and nearby providers.',
       },
       {
-        title: 'Simple and trustworthy',
-        description: 'We focus on clean navigation and clear page structure to help visitors find useful content faster.',
+        title: 'Built for confidence',
+        description: 'Consistent listing pages help visitors understand a business before making contact.',
       },
     ],
   },
   contact: {
     eyebrow: `Contact ${slot4BrandConfig.siteName}`,
-    title: 'A support page that matches the product, not a generic contact form.',
-    description: 'Tell us what you are trying to publish, fix, or launch. We will route it through the right lane instead of forcing every request into the same support bucket.',
-    formTitle: 'Send a message',
+    title: 'Let us help you get more from the directory.',
+    description: 'Whether you are adding a company, updating a listing, reporting inaccurate information, or exploring a partnership, send the details and our team will route your request.',
+    formTitle: 'How can we help?',
   },
 
   search: {
@@ -88,11 +89,11 @@ export const pagesContent = {
     },
     hero: {
       badge: 'Search the archive',
-      title: 'Find stories, listings, visuals, and resources faster.',
-      description: 'Use keywords, categories, and content types to discover posts from every active section of the site.',
-      placeholder: 'Search by keyword, topic, category, or title',
+      title: 'Search businesses, services, and categories.',
+      description: 'Use a company name, service, category, or location to narrow the directory and find a strong match.',
+      placeholder: 'Search business name, service, or location',
     },
-    resultsTitle: 'Latest searchable content',
+    resultsTitle: 'Businesses worth discovering',
   },
   create: {
     metadata: {
@@ -101,13 +102,13 @@ export const pagesContent = {
     },
     locked: {
       badge: 'Creator access',
-      title: 'Login to create new content.',
-      description: 'Use your account to open the publishing workspace and create posts for the active sections of this site.',
+      title: 'Login to add your business.',
+      description: 'Use your account to open the listing workspace and create or manage a business profile.',
     },
     hero: {
       badge: 'Publishing workspace',
-      title: 'Create content for every active section.',
-      description: 'Choose the content type, add details, and prepare a clean post with images, links, summary, and body content.',
+      title: 'Create a listing customers can trust.',
+      description: 'Add accurate details, a clear service summary, contact information, and images that help customers choose your business.',
     },
     formTitle: 'Content details',
     submitLabel: 'Submit content',
@@ -116,9 +117,9 @@ export const pagesContent = {
   auth: {
     login: {
       metadataDescription: 'Login page for this site.',
-      badge: 'Member access',
-      title: 'Welcome back to your publishing space.',
-      description: 'Login to continue browsing, managing submissions, and creating new content from your account.',
+      badge: 'Business account access',
+      title: 'Welcome back. Your listing workspace is ready.',
+      description: 'Login to create listings, manage your business information, and keep your directory presence current.',
       formTitle: 'Login',
       submitLabel: 'Continue',
       noAccount: 'No account matched these details. Create an account first, then login.',
@@ -127,9 +128,9 @@ export const pagesContent = {
     },
     signup: {
       metadataDescription: 'Signup page for this site.',
-      badge: 'Site access',
-      title: 'Create your account and start publishing.',
-      description: 'Create an account to access the publishing workspace, save details, and submit content through the site.',
+      badge: 'Join the directory',
+      title: 'Create an account and put your business on the map.',
+      description: 'Set up your account to publish a detailed business listing and make it easier for new customers to find you.',
       formTitle: 'Create account',
       submitLabel: 'Create account',
       passwordShort: 'Use at least 4 characters for the password.',

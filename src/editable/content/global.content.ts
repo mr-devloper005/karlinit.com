@@ -8,7 +8,7 @@ export const globalContent = {
     baseUrl: slot4BrandConfig.baseUrl,
   },
   nav: {
-    tagline: 'Independent reading platform',
+    tagline: 'Trusted local business directory',
     primaryLinks: [
       { label: 'Articles', href: '/articles' },
       { label: 'Visuals', href: '/image-sharing' },
@@ -21,8 +21,8 @@ export const globalContent = {
     },
   },
   footer: {
-    tagline: 'Stories, resources, and discoverable posts',
-    description: 'A connected publishing surface for articles, visuals, listings, profiles, bookmarks, and downloadable resources.',
+    tagline: 'Discover better businesses',
+    description: 'A practical business directory for discovering trusted providers, comparing services, and connecting with the right local company.',
     columns: [
       {
         title: 'Explore',
@@ -41,7 +41,7 @@ export const globalContent = {
         ],
       },
     ],
-    bottomNote: 'Built for clean discovery and connected publishing.',
+    bottomNote: 'Built for clear, confident business discovery.',
   },
   commonLabels: {
     readMore: 'Read more',
