@@ -3,7 +3,7 @@
 import { useMemo, useState, type CSSProperties } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Building2, LogIn, LogOut, Menu, PlusCircle, Search, UserPlus, X } from 'lucide-react'
+import { LogIn, LogOut, Menu, PlusCircle, Search, UserPlus, X } from 'lucide-react'
 import { SITE_CONFIG } from '@/lib/site-config'
 import { useEditableLocalAuthSession } from '@/editable/components/EditableLocalAuthForms'
 

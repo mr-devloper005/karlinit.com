@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import type { CSSProperties } from 'react'
-import { ArrowUpRight, Building2, Mail, MapPin, Search } from 'lucide-react'
+import { ArrowUpRight, Mail, MapPin, Search } from 'lucide-react'
 import { SITE_CONFIG } from '@/lib/site-config'
 import { globalContent } from '@/editable/content/global.content'
 import { useEditableLocalAuthSession } from '@/editable/components/EditableLocalAuthForms'
