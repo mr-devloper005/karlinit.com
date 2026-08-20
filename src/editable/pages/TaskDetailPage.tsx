@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import type { CSSProperties } from 'react'
 import { notFound } from 'next/navigation'
-import { ArrowLeft, Bookmark, Building2, Camera, CheckCircle2, Download, ExternalLink, FileText, Globe2, Mail, MapPin, MessageCircle, Navigation, Phone, Star, Tag, UserRound } from 'lucide-react'
+import { ArrowLeft, Bookmark, Building2, Camera, CheckCircle2, Download, ExternalLink, FileText, Globe2, Mail, MessageCircle, Navigation, Phone, Star, Tag, UserRound } from 'lucide-react'
 import { buildPostMetadata, buildTaskMetadata } from '@/lib/seo'
 import { buildPostUrl, fetchArticleComments, fetchTaskPostBySlug, fetchTaskPosts } from '@/lib/task-data'
 import { getTaskConfig, SITE_CONFIG, type TaskKey } from '@/lib/site-config'
@@ -92,18 +92,11 @@ const formatPlainText = (raw: string) => {
     .join('')
 }
 
-const summaryText = (post: SitePost) => post.summary || asText(getContent(post).description) || asText(getContent(post).excerpt) || ''
+const stripHtml = (value: string) => value.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()
+const summaryText = (post: SitePost) => stripHtml(post.summary || asText(getContent(post).description) || asText(getContent(post).excerpt) || '')
 const categoryOf = (post: SitePost, fallback: string) => asText(getContent(post).category) || post.tags?.[0] || fallback
 const externalHref = (value: string) => value ? (/^https?:\/\//i.test(value) ? value : `https://${value.replace(/^\/+/, '')}`) : '#'
 const directionsHref = (address: string) => address ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}` : '#'
-const mapSrcFor = (post: SitePost) => {
-  const address = getField(post, ['address', 'location', 'city'])
-  const lat = getField(post, ['lat', 'latitude'])
-  const lng = getField(post, ['lng', 'lon', 'longitude'])
-  if (lat && lng) return `https://maps.google.com/maps?q=${encodeURIComponent(`${lat},${lng}`)}&z=14&output=embed`
-  if (address) return `https://maps.google.com/maps?q=${encodeURIComponent(address)}&z=13&output=embed`
-  return ''
-}
 
 export function TaskDetailView({ task, post, related, comments = [] }: { task: TaskKey; post: SitePost; related: SitePost[]; comments?: Array<{ id: string; name: string; comment: string; createdAt: string }> }) {
   const detailVars = { '--detail-bg': '#f7f8f4', '--detail-text': '#14231d', '--detail-surface': '#ffffff', '--detail-accent': '#16784a' } as CSSProperties
@@ -207,13 +200,13 @@ function ListingDetail({ post, related }: { post: SitePost; related: SitePost[] 
 
       <div className="mx-auto grid max-w-[1180px] gap-8 px-4 py-12 sm:px-6 lg:grid-cols-[minmax(0,1fr)_360px] lg:px-8">
         <article className="space-y-8">
-          <section className="rounded-none border border-[#14231d]/35 bg-[#eee9dd] p-7 shadow-[10px_10px_0_#dff2e7] sm:p-9">
+          <section className="rounded-[2rem] border border-[var(--editable-border)] bg-white p-7 shadow-[0_12px_40px_rgba(0,0,0,0.08)] sm:p-9">
             <h2 className="text-2xl font-black tracking-[-0.04em]">About this business</h2>
             <BodyContent post={post} />
           </section>
 
           {tags.length ? (
-            <section className="rounded-none border border-[#14231d]/35 bg-[#eee9dd] p-7 sm:p-9">
+            <section className="rounded-[2rem] border border-[var(--editable-border)] bg-white p-7 shadow-sm sm:p-9">
               <h2 className="text-xl font-black tracking-[-0.04em]">Business tags</h2>
               <div className="mt-5 flex flex-wrap gap-3">
                 {tags.map((tag) => <span key={tag} className="inline-flex items-center gap-2 rounded-full border border-[#14231d]/20 bg-white/45 px-4 py-2 text-sm font-black"><Tag className="h-4 w-4 text-[#16784a]" /> {tag}</span>)}
@@ -234,7 +227,7 @@ function ListingDetail({ post, related }: { post: SitePost; related: SitePost[] 
 
 function BusinessContactPanel({ address, phone, email, website, title }: { address: string; phone: string; email: string; website: string; title: string }) {
   return (
-    <section className="border border-[#14231d]/55 bg-[#eee9dd] p-7 shadow-[7px_7px_0_#a7d5c2]">
+    <section className="rounded-[2rem] border border-[var(--editable-border)] bg-white p-7 shadow-[0_12px_40px_rgba(0,0,0,0.08)]">
       <h2 className="text-2xl font-black tracking-[-0.04em]">{address || 'Contact information'}</h2>
       <div className="mt-6 grid gap-4 text-sm font-bold">
         {phone ? <a href={`tel:${phone}`} className="flex items-center gap-3 transition hover:text-[#16784a]"><Phone className="h-4 w-4" /> {phone}</a> : null}
@@ -243,9 +236,9 @@ function BusinessContactPanel({ address, phone, email, website, title }: { addre
         {address ? <Link href={directionsHref(address)} target="_blank" rel="noreferrer" className="flex items-center gap-3 transition hover:text-[#16784a]"><Navigation className="h-4 w-4" /> Get directions</Link> : null}
       </div>
       <div className="mt-7 grid gap-3">
-        {website ? <Link href={externalHref(website)} target="_blank" rel="noreferrer" className="inline-flex items-center justify-center gap-2 bg-[#16784a] px-5 py-3 text-sm font-black text-white">Visit website <ExternalLink className="h-4 w-4" /></Link> : null}
-        {phone ? <a href={`tel:${phone}`} className="inline-flex items-center justify-center gap-2 border border-[#14231d]/25 px-5 py-3 text-sm font-black">Call business <Phone className="h-4 w-4" /></a> : null}
-        {!website && !phone && !email ? <Link href={`/contact?subject=${encodeURIComponent(`Question about ${title}`)}`} className="inline-flex items-center justify-center gap-2 bg-[#16784a] px-5 py-3 text-sm font-black text-white">Ask about this listing</Link> : null}
+        {website ? <Link href={externalHref(website)} target="_blank" rel="noreferrer" className="inline-flex items-center justify-center gap-2 rounded-full bg-[#16784a] px-5 py-3 text-sm font-black text-white">Visit website <ExternalLink className="h-4 w-4" /></Link> : null}
+        {phone ? <a href={`tel:${phone}`} className="inline-flex items-center justify-center gap-2 rounded-full border border-[var(--editable-border)] px-5 py-3 text-sm font-black">Call business <Phone className="h-4 w-4" /></a> : null}
+        {!website && !phone && !email ? <Link href={`/contact?subject=${encodeURIComponent(`Question about ${title}`)}`} className="inline-flex items-center justify-center gap-2 rounded-full bg-[#16784a] px-5 py-3 text-sm font-black text-white">Ask about this listing</Link> : null}
       </div>
     </section>
   )
@@ -256,9 +249,9 @@ function BusinessContactPanel({ address, phone, email, website, title }: { addre
 function GalleryPanel({ images }: { images: string[] }) {
   if (!images.length) return null
   return (
-    <section id="photo-gallery" className="border border-[#14231d]/55 bg-[#eee9dd] p-7 shadow-[7px_7px_0_#f0e98a]">
+    <section id="photo-gallery" className="rounded-[2rem] border border-[var(--editable-border)] bg-white p-7 shadow-sm">
       <h2 className="flex items-center gap-2 text-lg font-black"><Camera className="h-5 w-5 text-[#16784a]" /> Photo gallery</h2>
-      <div className="mt-5 h-px bg-[#16784a]/50" />
+      <div className="mt-5 h-px bg-[var(--editable-border)]" />
       <div className="mt-6 flex flex-wrap gap-4">
         {images.slice(0, 6).map((image, index) => <a key={`${image}-${index}`} href={image} target="_blank" rel="noreferrer" className="block h-16 w-16 overflow-hidden rounded-full border-2 border-white shadow-sm transition hover:scale-105"><img src={image} alt="" className="h-full w-full object-cover" /></a>)}
       </div>
@@ -401,20 +394,6 @@ function BodyContent({ post, compact = false }: { post: SitePost; compact?: bool
   return <div className={`article-content mt-8 max-w-none ${compact ? 'text-base leading-8' : 'text-lg leading-9'} opacity-80`} dangerouslySetInnerHTML={{ __html: formatPlainText(getBody(post)) }} />
 }
 
-function InfoGrid({ items }: { items: Array<[string, string, typeof MapPin]> }) {
-  const visible = items.filter(([, value]) => value)
-  if (!visible.length) return null
-  return (
-    <div className="mt-8 grid gap-3 sm:grid-cols-2">
-      {visible.map(([label, value, Icon]) => (
-        <div key={label} className="rounded-[1.5rem] border border-[var(--editable-border)] bg-[var(--detail-bg)] p-4">
-          <div className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] opacity-55"><Icon className="h-4 w-4" /> {label}</div>
-          <p className="mt-2 break-words text-sm font-bold leading-6 opacity-80">{value}</p>
-        </div>
-      ))}
-    </div>
-  )
-}
 
 function ImageStrip({ images, label, large = false }: { images: string[]; label: string; large?: boolean }) {
   if (!images.length) return null
@@ -428,14 +407,6 @@ function ImageStrip({ images, label, large = false }: { images: string[]; label:
   )
 }
 
-function MapBox({ src, label }: { src: string; label: string }) {
-  return (
-    <div className="overflow-hidden rounded-[2rem] border border-[var(--editable-border)] bg-white shadow-sm">
-      <div className="flex items-center gap-2 p-4 text-sm font-black"><MapPin className="h-4 w-4" /> {label || 'Map location'}</div>
-      <iframe src={src} title="Map" loading="lazy" className="h-80 w-full border-0" />
-    </div>
-  )
-}
 
 function ContactAction({ website, phone, email }: { website?: string; phone?: string; email?: string }) {
   if (!website && !phone && !email) return null
@@ -455,7 +426,7 @@ function BadgeLine({ label, value }: { label: string; value: string }) {
   return <div className="flex items-center justify-between gap-4 rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-sm"><span className="font-black uppercase tracking-[0.16em] opacity-60">{label}</span><span className="font-black">{value}</span></div>
 }
 
-function RelatedPanel({ task, post, related, compact = false }: { task: TaskKey; post: SitePost; related: SitePost[]; compact?: boolean }) {
+function RelatedPanel({ task, related, compact = false }: { task: TaskKey; post: SitePost; related: SitePost[]; compact?: boolean }) {
   const taskConfig = getTaskConfig(task)
   return (
     <aside className="min-w-0 space-y-5">
