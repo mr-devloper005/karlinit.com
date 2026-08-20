@@ -1,6 +1,6 @@
 'use client'
 
-import { BadgeCheck, Building2, Mail, MessageSquareText } from 'lucide-react'
+import { BadgeCheck, Building2, MessageSquareText } from 'lucide-react'
 import { pagesContent } from '@/editable/content/pages.content'
 import { EditableContactLeadForm } from '@/editable/components/EditableContactLeadForm'
 import { EditableSiteShell } from '@/editable/shell/EditableSiteShell'
